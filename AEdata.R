@@ -25,7 +25,7 @@ dose.key <- reader(cat.path(main.dir,"ID_DOSE.tab"));
 colnames(dose.key) <- c("ID","DOSE")[2]
 
 # adverse event data
-safety <- reader(cat.path(main.dir,"AEs/safety.csv"))
+safety <- reader(cat.path(main.dir,"safety.csv"))
 #colnames(safety)-->
 #"ID" "StartVisit" "EndVisit" "TimeSinceMed" "Severity"  "Relatedness" "Category" "Description" 
 
@@ -591,7 +591,7 @@ long.way2 <- reshape(cor.dat2,varying=list(paste("CRP",tmz,sep="."), paste("sCD2
                  paste("sSiglec",tmz,sep="."), paste("TregDIL",tmz,sep="."), paste("CD25",tmz,sep=".")),
                     direction="long")
 
-corz2 <- round(cor(long.way2[,c(-1,-ncol(long.way))],use="pairwise.complete"),1)
+corz2 <- round(cor(long.way2[,c(-1,-ncol(long.way2))],use="pairwise.complete"),1)
 colnames(corz2) <- gsub(".0.001","",colnames(corz2))
 rownames(corz2) <- gsub(".0.001","",rownames(corz2))
 
@@ -606,7 +606,7 @@ big.cor <- cor(cor.dat,use="pairwise.complete")
 diag(big.cor[grep("CD25",rownames(big.cor)),grep("CRP",colnames(big.cor))])
 diag(big.cor[grep("IL2",rownames(big.cor)),grep("sCD25",colnames(big.cor))])
 
-with(long.way,cor.test(sSiglec.0.001,CRP.0.001)) # show that correlation .3 is .0002 (passes bonf for 60 tests)
+with(long.way2,cor.test(sSiglec.0.001,CRP.0.001)) # show that correlation .3 is .0002 (passes bonf for 60 tests)
 #with(cor.dat,cor.test(Temp,CRP)) # show that correlation .3 is .0002 (passes bonf for 60 tests)
 }
 
