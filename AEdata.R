@@ -2,12 +2,14 @@ library(readxl)
 library(reader)
 library(reshape)
 
+main.dir <- c("/chiswick/data/ncooper/AEs","~/Documents/AEs")[2]
+
 Ksheet.names <- c("CRP","sCD25","sIL6R","IL2","IL6","IFN","Treg","Temp","sSiglec","TregDIL","CD25")
 sheets <- length(Ksheet.names)
 nxt <- vector("list",sheets)
 
 for (cc in 1:sheets) {
-  nxt[[cc]] <- read_excel("/chiswick/data/ncooper/AEs/AEDATA2.xls",sheet=cc)
+  nxt[[cc]] <- read_excel(cat.path(main.dir,"AEDATA2.xls"),sheet=cc)
 }
 
 # now go into each sheet and extract the proper data
@@ -19,11 +21,11 @@ names(nxt) <- Ksheet.names
 Kday <- c(0.001,.25,1,2,3,4,7,9,14,21,60)
 Knms <- c("V0_Pre","V0_Post",paste0("V",1:9))
 
-dose.key <- reader("/chiswick/data/ncooper/AEs/ID_DOSE.tab"); 
+dose.key <- reader(cat.path(main.dir,"ID_DOSE.tab")); 
 colnames(dose.key) <- c("ID","DOSE")[2]
 
 # adverse event data
-safety <- reader("/chiswick/data/ncooper/AEs/safety.csv")
+safety <- reader(cat.path(main.dir,"AEs/safety.csv"))
 #colnames(safety)-->
 #"ID" "StartVisit" "EndVisit" "TimeSinceMed" "Severity"  "Relatedness" "Category" "Description" 
 
@@ -212,7 +214,7 @@ plot.all <-  function(measures=Ksheet.names,...) {
   ii <- list(...)
   if("measure" %in% names(ii)) { stop("argument measure not allowed for plot.all") }
   
-  fn <- "/chiswick/data/ncooper/all.cyto.plots.pdf"
+  fn <- cat.path(main.dir,"all.cyto.plots.pdf")
   pdf(fn)
   # iterate over each sheet
   for (jj in 1:length(measures)) {
@@ -479,7 +481,7 @@ base.il2 <- Knew.dat$IL2[Knew.dat$DAY==0.001]
 t1d.il2.sd <- sd(base.il2,na.rm=T)
 t1d.il2.mn <- mean(base.il2,na.rm=T)
 ttt <- (base.il2); hhh <- (normal.il2)
-pdf("/chiswick/data/ncooper/AEs/T1DvsCTRL_IL2_dists.pdf")
+pdf(cat.path(main.dir,"T1DvsCTRL_IL2_dists.pdf"))
 plot(density(c(ttt,hhh)),col="white",xlab="IL2 raw values",main="")
 lines(density(ttt),col="red");lines(density(hhh),col="blue")
 legend("topright",legend=c("T1D","Healthy Controls"),col=c("red","blue"),bty="n",lwd=2)
@@ -584,9 +586,9 @@ print(corz1[-1,-ncol(corz1)],quote=F)
 # Correlation Analysis for Active timepoints (0,90m,1,2)
 tmz <- c(0.001,0.25,1,2)  # active drug
 long.way2 <- reshape(cor.dat2,varying=list(paste("CRP",tmz,sep="."), paste("sCD25",tmz,sep="."),
-                                         paste("sIL6R",tmz,sep="."),paste("IL2",tmz,sep="."), paste("IL6",tmz,sep="."),
-                                         paste("IFN",tmz,sep="."), paste("Treg",tmz,sep="."), paste("Temp",tmz,sep="."),
-                                         paste("sSiglec",tmz,sep="."), paste("TregDIL",tmz,sep="."), paste("CD25",tmz,sep=".")),
+                 paste("sIL6R",tmz,sep="."),paste("IL2",tmz,sep="."), paste("IL6",tmz,sep="."),
+                 paste("IFN",tmz,sep="."), paste("Treg",tmz,sep="."), paste("Temp",tmz,sep="."),
+                 paste("sSiglec",tmz,sep="."), paste("TregDIL",tmz,sep="."), paste("CD25",tmz,sep=".")),
                     direction="long")
 
 corz2 <- round(cor(long.way2[,c(-1,-ncol(long.way))],use="pairwise.complete"),1)
